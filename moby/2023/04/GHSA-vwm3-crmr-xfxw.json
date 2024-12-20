@@ -1,0 +1,108 @@
+{
+	"cvss": {},
+	"ghsa_id": "GHSA-vwm3-crmr-xfxw",
+	"summary": "The Swarm VXLAN port may be exposed to attack due to ambiguous documentation",
+	"description": "Swarm Mode, which is compiled in and delivered by default in `dockerd` and is thus present in most major Moby downstreams, is a simple, built-in container orchestrator that is implemented through a combination of [SwarmKit](https://github.com/moby/swarmkit) and supporting network code.\r\n\r\nSystem administrators may have been misled by ambiguities in the Swarm Mode documentation, which [enumerates a list of ports](https://docs.docker.com/engine/swarm/swarm-tutorial/#open-protocols-and-ports-between-the-hosts) used by the feature without appropriate context and cautionary labeling.\r\n\r\nSwarm overlay networks use a single UDP port (by default UDP port 4789, and referred to as the VXLAN port) for [VXLAN](https://en.wikipedia.org/wiki/Virtual_Extensible_LAN), an encapsulation technology that enables the transport of Ethernet frames over a routed or unrouted network connection. VXLAN has no built in confidentiality or authentication, and as such an open VXLAN port can be made the entry point for an injection of arbitrary Ethernet frames into a network by an adversary. \r\n\r\nWhile this type of attack is relatively novel, it is actively studied and depending on the implementation and environmental factors, can allow for [devastating attacks](https://ripe77.ripe.net/presentations/32-vxlan-ripe77.pdf) on exposed infrastructure. For this reason, the VXLAN port should be opened only on a trusted LAN (or LAN-like) environment on which all nodes that are capable of sending traffic are fully trusted with maximum privilege in the cluster. The VXLAN port must never be exposed to untrusted traffic, even in the case of an [encrypted overlay network](https://docs.docker.com/network/overlay/#encrypt-traffic-on-an-overlay-network) that is operated over the public Internet or other untrusted network.\r\n\r\nVXLAN traffic originating from encrypted overlay networks are encapsulated using the [IPsec Encapsulating Security Payload](https://en.wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload) protocol in [Transport mode](https://en.wikipedia.org/wiki/IPsec#Transport_mode). IPSec ESP does not have port numbers, and as such the port number will be unknown until the packet is decrypted by the destination node.  For this reason, a perimeter firewall should never accept traffic on UDP port 4789, even when an encrypted overlay is operating over an untrusted network.\r\n\r\nSimilarly, if encrypted overlay networks are used exclusively, it is best to block all incoming unencrypted traffic on VXLAN port at each node as the port represents an unnecessary increase in surface area. As encrypted overlay networks are only supported on Linux, this is easily accomplished through [use of the IPSec policy matcher.](https://utcc.utoronto.ca/~cks/space/blog/linux/IptablesBlockNonIpsec)\r\n\r\nSuch a rule might look like `iptables -I INPUT -m udp —-dport 4789 -m policy --dir in --pol none -j DROP`.\r\n\r\n**In no case should the VXLAN port be exposed to untrusted traffic.** While the needs of individual networks may vary, any deployment of Swarm Mode should keep in mind that the VXLAN port represents the ability to inject arbitrary frames into overlay networks.\r\n\r\n## Related\r\n* [CVE-2023-28840: Encrypted overlay network may be unauthenticated](https://github.com/moby/moby/security/advisories/GHSA-232p-vwff-86mp)\r\n* [CVE-2023-28841: Encrypted overlay network traffic may be unencrypted](https://github.com/moby/moby/security/advisories/GHSA-33pg-m6jh-5237)\r\n* [CVE-2023-28842: Encrypted overlay network with a single endpoint is unauthenticated](https://github.com/moby/moby/security/advisories/GHSA-6wrf-mxfj-pf5p)",
+	"severity": "high",
+	"identifiers": [
+		{
+			"value": "GHSA-vwm3-crmr-xfxw",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2023-04-04T18:15:55Z",
+	"updated_at": "2023-04-06T14:42:43Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "web",
+				"name": "docs.docker.com"
+			},
+			"vulnerable_version_range": "N/A",
+			"patched_versions": ""
+		}
+	],
+	"url": "https://api.github.com/repos/moby/moby/security-advisories/GHSA-vwm3-crmr-xfxw",
+	"html_url": "https://github.com/moby/moby/security/advisories/GHSA-vwm3-crmr-xfxw",
+	"publisher": {
+		"login": "thaJeztah",
+		"id": 1804568,
+		"node_id": "MDQ6VXNlcjE4MDQ1Njg=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/1804568?v=4",
+		"html_url": "https://github.com/thaJeztah",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/thaJeztah",
+		"events_url": "https://api.github.com/users/thaJeztah/events{/privacy}",
+		"following_url": "https://api.github.com/users/thaJeztah/following{/other_user}",
+		"followers_url": "https://api.github.com/users/thaJeztah/followers",
+		"gists_url": "https://api.github.com/users/thaJeztah/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/thaJeztah/orgs",
+		"received_events_url": "https://api.github.com/users/thaJeztah/received_events",
+		"repos_url": "https://api.github.com/users/thaJeztah/repos",
+		"starred_url": "https://api.github.com/users/thaJeztah/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/thaJeztah/subscriptions"
+	},
+	"state": "published",
+	"credits": [
+		{
+			"login": "corhere",
+			"type": "reporter"
+		},
+		{
+			"login": "neersighted",
+			"type": "coordinator"
+		}
+	],
+	"credits_detailed": [
+		{
+			"user": {
+				"login": "corhere",
+				"id": 274527,
+				"node_id": "MDQ6VXNlcjI3NDUyNw==",
+				"avatar_url": "https://avatars.githubusercontent.com/u/274527?v=4",
+				"html_url": "https://github.com/corhere",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/corhere",
+				"events_url": "https://api.github.com/users/corhere/events{/privacy}",
+				"following_url": "https://api.github.com/users/corhere/following{/other_user}",
+				"followers_url": "https://api.github.com/users/corhere/followers",
+				"gists_url": "https://api.github.com/users/corhere/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/corhere/orgs",
+				"received_events_url": "https://api.github.com/users/corhere/received_events",
+				"repos_url": "https://api.github.com/users/corhere/repos",
+				"starred_url": "https://api.github.com/users/corhere/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/corhere/subscriptions"
+			},
+			"type": "reporter",
+			"state": "accepted"
+		},
+		{
+			"user": {
+				"login": "neersighted",
+				"id": 1049222,
+				"node_id": "MDQ6VXNlcjEwNDkyMjI=",
+				"avatar_url": "https://avatars.githubusercontent.com/u/1049222?v=4",
+				"html_url": "https://github.com/neersighted",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/neersighted",
+				"events_url": "https://api.github.com/users/neersighted/events{/privacy}",
+				"following_url": "https://api.github.com/users/neersighted/following{/other_user}",
+				"followers_url": "https://api.github.com/users/neersighted/followers",
+				"gists_url": "https://api.github.com/users/neersighted/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/neersighted/orgs",
+				"received_events_url": "https://api.github.com/users/neersighted/received_events",
+				"repos_url": "https://api.github.com/users/neersighted/repos",
+				"starred_url": "https://api.github.com/users/neersighted/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/neersighted/subscriptions"
+			},
+			"type": "coordinator",
+			"state": "accepted"
+		}
+	]
+}

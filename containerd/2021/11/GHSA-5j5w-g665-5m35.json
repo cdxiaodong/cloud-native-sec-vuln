@@ -1,0 +1,48 @@
+{
+	"cvss": {},
+	"ghsa_id": "GHSA-5j5w-g665-5m35",
+	"summary": "Ambiguous OCI manifest parsing",
+	"description": "### Impact\r\n\r\nIn the OCI Distribution Specification version 1.0.0 and prior and in the OCI Image Specification version 1.0.1 and prior, manifest and index documents are ambiguous without an accompanying Content-Type HTTP header.  Versions of containerd prior to 1.4.12 and 1.5.8 treat the Content-Type header as trusted and deserialize the document according to that header.  If the Content-Type header changed between pulls of the same ambiguous document (with the same digest), the document may be interpreted differently, meaning that the digest alone is insufficient to unambiguously identify the content of the image.\r\n\r\n### Patches\r\n\r\nThis issue has been fixed in containerd 1.4.12 and 1.5.8.  Image pulls for manifests that contain a “manifests” field or indices which contain a “layers” field are rejected.\r\n\r\n### Workarounds\r\n\r\nEnsure you only pull images from trusted sources.\r\n\r\n### References\r\n\r\nhttps://github.com/opencontainers/distribution-spec/security/advisories/GHSA-mc8v-mgrf-8f4m\r\nhttps://github.com/opencontainers/image-spec/security/advisories/GHSA-77vh-xpmg-72qh\r\n\r\n### For more information\r\nIf you have any questions or comments about this advisory:\r\n* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)\r\n* Email us at [security@containerd.io](mailto:security@containerd.io)",
+	"severity": "medium",
+	"identifiers": [
+		{
+			"value": "GHSA-5j5w-g665-5m35",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2021-11-18T02:04:27Z",
+	"updated_at": "2021-11-18T02:04:27Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "go",
+				"name": ""
+			},
+			"vulnerable_version_range": "\u003c 1.4.12, 1.5.0, 1.5.1, 1.5.2, 1.5.3, 1.5.4, 1.5.5, 1.5.6, 1.5.7",
+			"patched_versions": "1.14.12, 1.5.8"
+		}
+	],
+	"url": "https://api.github.com/repos/containerd/containerd/security-advisories/GHSA-5j5w-g665-5m35",
+	"html_url": "https://github.com/containerd/containerd/security/advisories/GHSA-5j5w-g665-5m35",
+	"publisher": {
+		"login": "dmcgowan",
+		"id": 169601,
+		"node_id": "MDQ6VXNlcjE2OTYwMQ==",
+		"avatar_url": "https://avatars.githubusercontent.com/u/169601?v=4",
+		"html_url": "https://github.com/dmcgowan",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/dmcgowan",
+		"events_url": "https://api.github.com/users/dmcgowan/events{/privacy}",
+		"following_url": "https://api.github.com/users/dmcgowan/following{/other_user}",
+		"followers_url": "https://api.github.com/users/dmcgowan/followers",
+		"gists_url": "https://api.github.com/users/dmcgowan/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/dmcgowan/orgs",
+		"received_events_url": "https://api.github.com/users/dmcgowan/received_events",
+		"repos_url": "https://api.github.com/users/dmcgowan/repos",
+		"starred_url": "https://api.github.com/users/dmcgowan/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/dmcgowan/subscriptions"
+	},
+	"state": "published"
+}

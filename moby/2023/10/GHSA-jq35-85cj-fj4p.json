@@ -1,0 +1,164 @@
+{
+	"cvss": {},
+	"ghsa_id": "GHSA-jq35-85cj-fj4p",
+	"summary": "/sys/devices/virtual/powercap accessible by default to containers",
+	"description": "Intel's RAPL (Running Average Power Limit) feature, introduced by the Sandy Bridge microarchitecture, provides software insights into hardware energy consumption. To facilitate this, Intel introduced the powercap framework in Linux kernel 3.13, which reads values via relevant MSRs (model specific registers) and provides unprivileged userspace access via `sysfs`. As RAPL is an interface to access a hardware feature, it is only available when running on bare metal with the module compiled into the kernel.\r\n\r\nBy 2019, it was realized that in some cases unprivileged access to RAPL readings could be exploited as a power-based side-channel against security features including AES-NI (potentially inside a SGX enclave) and KASLR (kernel address space layout randomization). Also known as the [PLATYPUS attack](https://platypusattack.com/), Intel assigned [CVE-2020-8694](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8694) and [CVE-2020-8695](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8695), and AMD assigned [CVE-2020-12912](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-12912).\r\n\r\nSeveral mitigations were applied; Intel reduced the sampling resolution via a microcode update, and the Linux kernel [prevents access by non-root users](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=949dd0104c496fa7c14991a23c03c62e44637e71) since 5.10. However, this kernel-based mitigation does not apply to many container-based scenarios:\r\n* Unless using user namespaces, root inside a container has the same level of privilege as root outside the container, but with a slightly more narrow view of the system\r\n* `sysfs` is mounted inside containers read-only; however only read access is needed to carry out this attack on an unpatched CPU\r\n\r\nWhile this is not a direct vulnerability in container runtimes, defense in depth and safe defaults are valuable and preferred, especially as this poses a risk to multi-tenant container environments running directly on affected hardware. This is provided by masking `/sys/devices/virtual/powercap` in the default mount configuration, and adding an additional set of rules to deny it in the default AppArmor profile.\r\n\r\nWhile `sysfs` is not the only way to read from the RAPL subsystem, other ways of accessing it require additional capabilities such as `CAP_SYS_RAWIO` which is not available to containers by default, or `perf` paranoia level less than 1, which is a non-default kernel tunable.\r\n\r\n## References\r\n\r\n* https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8694\r\n* https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8695\r\n* https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-12912\r\n* https://platypusattack.com/\r\n* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=949dd0104c496fa7c14991a23c03c62e44637e71\r\n* https://web.eece.maine.edu/~vweaver/projects/rapl/",
+	"severity": "medium",
+	"identifiers": [
+		{
+			"value": "GHSA-jq35-85cj-fj4p",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2023-10-27T11:47:46Z",
+	"updated_at": "2023-10-27T11:47:46Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "go",
+				"name": "github.com/docker/docker"
+			},
+			"vulnerable_version_range": "\u003c= 20.10.26, \u003c= 23.0.7, \u003c= 24.0.6",
+			"patched_versions": "24.0.7"
+		}
+	],
+	"url": "https://api.github.com/repos/moby/moby/security-advisories/GHSA-jq35-85cj-fj4p",
+	"html_url": "https://github.com/moby/moby/security/advisories/GHSA-jq35-85cj-fj4p",
+	"publisher": {
+		"login": "thaJeztah",
+		"id": 1804568,
+		"node_id": "MDQ6VXNlcjE4MDQ1Njg=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/1804568?v=4",
+		"html_url": "https://github.com/thaJeztah",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/thaJeztah",
+		"events_url": "https://api.github.com/users/thaJeztah/events{/privacy}",
+		"following_url": "https://api.github.com/users/thaJeztah/following{/other_user}",
+		"followers_url": "https://api.github.com/users/thaJeztah/followers",
+		"gists_url": "https://api.github.com/users/thaJeztah/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/thaJeztah/orgs",
+		"received_events_url": "https://api.github.com/users/thaJeztah/received_events",
+		"repos_url": "https://api.github.com/users/thaJeztah/repos",
+		"starred_url": "https://api.github.com/users/thaJeztah/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/thaJeztah/subscriptions"
+	},
+	"state": "published",
+	"credits": [
+		{
+			"login": "zhangzhics",
+			"type": "reporter"
+		},
+		{
+			"login": "garrisongys",
+			"type": "reporter"
+		},
+		{
+			"login": "neersighted",
+			"type": "remediation_developer"
+		},
+		{
+			"login": "gabriellavengeo",
+			"type": "analyst"
+		}
+	],
+	"credits_detailed": [
+		{
+			"user": {
+				"login": "zhangzhics",
+				"id": 108529347,
+				"node_id": "U_kgDOBngGww",
+				"avatar_url": "https://avatars.githubusercontent.com/u/108529347?v=4",
+				"html_url": "https://github.com/zhangzhics",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/zhangzhics",
+				"events_url": "https://api.github.com/users/zhangzhics/events{/privacy}",
+				"following_url": "https://api.github.com/users/zhangzhics/following{/other_user}",
+				"followers_url": "https://api.github.com/users/zhangzhics/followers",
+				"gists_url": "https://api.github.com/users/zhangzhics/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/zhangzhics/orgs",
+				"received_events_url": "https://api.github.com/users/zhangzhics/received_events",
+				"repos_url": "https://api.github.com/users/zhangzhics/repos",
+				"starred_url": "https://api.github.com/users/zhangzhics/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/zhangzhics/subscriptions"
+			},
+			"type": "reporter",
+			"state": "accepted"
+		},
+		{
+			"user": {
+				"login": "garrisongys",
+				"id": 28879592,
+				"node_id": "MDQ6VXNlcjI4ODc5NTky",
+				"avatar_url": "https://avatars.githubusercontent.com/u/28879592?v=4",
+				"html_url": "https://github.com/garrisongys",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/garrisongys",
+				"events_url": "https://api.github.com/users/garrisongys/events{/privacy}",
+				"following_url": "https://api.github.com/users/garrisongys/following{/other_user}",
+				"followers_url": "https://api.github.com/users/garrisongys/followers",
+				"gists_url": "https://api.github.com/users/garrisongys/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/garrisongys/orgs",
+				"received_events_url": "https://api.github.com/users/garrisongys/received_events",
+				"repos_url": "https://api.github.com/users/garrisongys/repos",
+				"starred_url": "https://api.github.com/users/garrisongys/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/garrisongys/subscriptions"
+			},
+			"type": "reporter",
+			"state": "accepted"
+		},
+		{
+			"user": {
+				"login": "neersighted",
+				"id": 1049222,
+				"node_id": "MDQ6VXNlcjEwNDkyMjI=",
+				"avatar_url": "https://avatars.githubusercontent.com/u/1049222?v=4",
+				"html_url": "https://github.com/neersighted",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/neersighted",
+				"events_url": "https://api.github.com/users/neersighted/events{/privacy}",
+				"following_url": "https://api.github.com/users/neersighted/following{/other_user}",
+				"followers_url": "https://api.github.com/users/neersighted/followers",
+				"gists_url": "https://api.github.com/users/neersighted/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/neersighted/orgs",
+				"received_events_url": "https://api.github.com/users/neersighted/received_events",
+				"repos_url": "https://api.github.com/users/neersighted/repos",
+				"starred_url": "https://api.github.com/users/neersighted/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/neersighted/subscriptions"
+			},
+			"type": "remediation_developer",
+			"state": "accepted"
+		},
+		{
+			"user": {
+				"login": "gabriellavengeo",
+				"id": 23005021,
+				"node_id": "MDQ6VXNlcjIzMDA1MDIx",
+				"avatar_url": "https://avatars.githubusercontent.com/u/23005021?v=4",
+				"html_url": "https://github.com/gabriellavengeo",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/gabriellavengeo",
+				"events_url": "https://api.github.com/users/gabriellavengeo/events{/privacy}",
+				"following_url": "https://api.github.com/users/gabriellavengeo/following{/other_user}",
+				"followers_url": "https://api.github.com/users/gabriellavengeo/followers",
+				"gists_url": "https://api.github.com/users/gabriellavengeo/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/gabriellavengeo/orgs",
+				"received_events_url": "https://api.github.com/users/gabriellavengeo/received_events",
+				"repos_url": "https://api.github.com/users/gabriellavengeo/repos",
+				"starred_url": "https://api.github.com/users/gabriellavengeo/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/gabriellavengeo/subscriptions"
+			},
+			"type": "analyst",
+			"state": "accepted"
+		}
+	]
+}
