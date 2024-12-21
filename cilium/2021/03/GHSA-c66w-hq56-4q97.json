@@ -1,0 +1,108 @@
+{
+	"cvss": {},
+	"ghsa_id": "GHSA-c66w-hq56-4q97",
+	"summary": "Network policy may be bypassed by some ICMP Echo Requests",
+	"description": "## Impact\r\n\r\nUnder certain conditions, ICMP Echo Request sent to a Cilium endpoint from an actor may bypass a network policy which _disallows_ access from the actor to the endpoint, but _allows_ from the endpoint to the actor. This does _NOT_ apply to UDP and TCP traffic.\r\n\r\nThe actor is either a pod or a cluster host or a remote host.\r\n\r\nThe following conditions must be met:\r\n1. Network policies have been created which:\r\n  a) do not allow access from the actor to the endpoint;\r\n  b) allow access from the endpoint to the actor and does not specify neither protocol nor port. \r\n2. The endpoint has sent ICMP Echo Request to the actor with the ICMP identifier X.\r\n3. The actor sends ICMP Echo Request to the endpoint with the same ICMP identifier X.\r\n4. The request from the actor (3.) is sent before the Cilium's conntrack GC has removed the previously created conntrack entry (2.).\r\n\r\n## Detailed description\r\n\r\nSee https://github.com/cilium/cilium/commit/dfb008a9099c4da1e0fd964c899c43ee13280b0e (v1.9.x), https://github.com/cilium/cilium/commit/ff6ebae6efca1bd991302b464dea428512823e79 (v1.8.x), https://github.com/cilium/cilium/commit/472bbeff75161979c317ab21d563f826291b5f37 (v1.7.x).\r\n\r\n## Example\r\n\r\n```\r\n$ kubectl run server --image=quay.io/cilium/net-test:v1.0.0 --restart=Never -- sleep 3600\r\n$ kubectl run client --image=quay.io/cilium/net-test:v1.0.0 --restart=Never -- sleep 3600\r\n$ cat \u003c\u003cEOF | kubectl apply -f\r\napiVersion: networking.k8s.io/v1\r\nkind: NetworkPolicy\r\nmetadata:\r\n  name: server-netpol # allow client-\u003eserver\r\nspec:\r\n  podSelector:\r\n    matchLabels:\r\n      run: server\r\n  ingress:\r\n  - from:\r\n    - podSelector:\r\n        matchLabels:\r\n          run: client\r\n  policyTypes:\r\n  - Ingress\r\n---\r\napiVersion: networking.k8s.io/v1\r\nkind: NetworkPolicy\r\nmetadata:\r\n  name: client-netpol # deny any-\u003eclient\r\nspec:\r\n  podSelector:\r\n    matchLabels:\r\n      run: client\r\n  policyTypes:\r\n  - Ingress\r\nEOF\r\n\r\n$ kubectl exec -ti server -- xping -c1 -x666 $CLIENT_POD_IP\r\nPING 10.154.0.50 (10.154.0.50): 56 data bytes\r\n^C\r\n--- 10.154.0.50 ping statistics ---\r\n1 packets transmitted, 0 packets received, 100% packet loss   \u003c--- \"client-netpol\" policy denied\r\ncommand terminated with exit code 1\r\n\r\n$ kubectl exec -ti client -- xping -c1 -x666 $SERVER_POD_IP\r\nPING 10.154.1.16 (10.154.1.16): 56 data bytes\r\n64 bytes from 10.154.1.16: seq=0 ttl=60 time=0.822 ms\r\n\r\n--- 10.154.1.16 ping statistics ---\r\n1 packets transmitted, 1 packets received, 0% packet loss   \u003c--- \"server-netpol\" policy allowed\r\nround-trip min/avg/max = 0.822/0.822/0.822 ms\r\n\r\n$ kubectl exec -ti server -- xping -c1 -x666 $CLIENT_POD_IP\r\nPING 10.154.0.50 (10.154.0.50): 56 data bytes\r\n64 bytes from 10.154.0.50: seq=0 ttl=60 time=0.527 ms\r\n\r\n--- 10.154.0.50 ping statistics ---\r\n1 packets transmitted, 1 packets received, 0% packet loss   \u003c--- \"client-netpol\" policy bypassed\r\nround-trip min/avg/max = 0.527/0.527/0.527 ms\r\n```\r\n\r\n## For more information\r\n\r\nIf you have any questions or comments about this advisory:\r\n\r\n- Open an issue in [Cilium Issues](https://github.com/cilium/cilium/issues)\r\n- Email us at security@cilium.io",
+	"severity": "low",
+	"identifiers": [
+		{
+			"value": "GHSA-c66w-hq56-4q97",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2021-03-11T00:55:18Z",
+	"updated_at": "2021-03-11T01:32:04Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "",
+				"name": "cilium"
+			},
+			"vulnerable_version_range": "v1.7.8 - v1.7.14, v1.8.3 - v1.8.7, v1.9.0 - v1.9.4",
+			"patched_versions": "v1.7.15, v1.8.8, v1.9.5"
+		}
+	],
+	"url": "https://api.github.com/repos/cilium/cilium/security-advisories/GHSA-c66w-hq56-4q97",
+	"html_url": "https://github.com/cilium/cilium/security/advisories/GHSA-c66w-hq56-4q97",
+	"publisher": {
+		"login": "joestringer",
+		"id": 1243336,
+		"node_id": "MDQ6VXNlcjEyNDMzMzY=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/1243336?v=4",
+		"html_url": "https://github.com/joestringer",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/joestringer",
+		"events_url": "https://api.github.com/users/joestringer/events{/privacy}",
+		"following_url": "https://api.github.com/users/joestringer/following{/other_user}",
+		"followers_url": "https://api.github.com/users/joestringer/followers",
+		"gists_url": "https://api.github.com/users/joestringer/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/joestringer/orgs",
+		"received_events_url": "https://api.github.com/users/joestringer/received_events",
+		"repos_url": "https://api.github.com/users/joestringer/repos",
+		"starred_url": "https://api.github.com/users/joestringer/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/joestringer/subscriptions"
+	},
+	"state": "published",
+	"credits": [
+		{
+			"login": "brb",
+			"type": "analyst"
+		},
+		{
+			"login": "kkourt",
+			"type": "analyst"
+		}
+	],
+	"credits_detailed": [
+		{
+			"user": {
+				"login": "brb",
+				"id": 122571,
+				"node_id": "MDQ6VXNlcjEyMjU3MQ==",
+				"avatar_url": "https://avatars.githubusercontent.com/u/122571?v=4",
+				"html_url": "https://github.com/brb",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/brb",
+				"events_url": "https://api.github.com/users/brb/events{/privacy}",
+				"following_url": "https://api.github.com/users/brb/following{/other_user}",
+				"followers_url": "https://api.github.com/users/brb/followers",
+				"gists_url": "https://api.github.com/users/brb/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/brb/orgs",
+				"received_events_url": "https://api.github.com/users/brb/received_events",
+				"repos_url": "https://api.github.com/users/brb/repos",
+				"starred_url": "https://api.github.com/users/brb/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/brb/subscriptions"
+			},
+			"type": "analyst",
+			"state": "accepted"
+		},
+		{
+			"user": {
+				"login": "kkourt",
+				"id": 221481,
+				"node_id": "MDQ6VXNlcjIyMTQ4MQ==",
+				"avatar_url": "https://avatars.githubusercontent.com/u/221481?v=4",
+				"html_url": "https://github.com/kkourt",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/kkourt",
+				"events_url": "https://api.github.com/users/kkourt/events{/privacy}",
+				"following_url": "https://api.github.com/users/kkourt/following{/other_user}",
+				"followers_url": "https://api.github.com/users/kkourt/followers",
+				"gists_url": "https://api.github.com/users/kkourt/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/kkourt/orgs",
+				"received_events_url": "https://api.github.com/users/kkourt/received_events",
+				"repos_url": "https://api.github.com/users/kkourt/repos",
+				"starred_url": "https://api.github.com/users/kkourt/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/kkourt/subscriptions"
+			},
+			"type": "analyst",
+			"state": "accepted"
+		}
+	]
+}

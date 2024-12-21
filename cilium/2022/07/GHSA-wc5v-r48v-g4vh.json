@@ -1,0 +1,83 @@
+{
+	"cvss": {
+		"score": 3.3,
+		"vector_string": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L"
+	},
+	"ghsa_id": "GHSA-wc5v-r48v-g4vh",
+	"summary": "Host policy bypass in endpoint-routes mode with dual-stack",
+	"description": "### Impact\r\n\r\nThis vulnerability allows bypassing host policies for IPv6 traffic coming from a Cilium-managed pod and destined to the host-network namespace (e.g., to a host-network pod). Host policy enforcement on IPv4 or for traffic coming from outside the node is not affected.\r\n\r\nCilium is only affected by this vulnerability if IPv4, IPv6, endpoint routes, and the host firewall are enabled. Note that endpoint routes are typically only enabled in GKE, EKS, AKS, and OpenShift; in those environments, IPv6 is typically disabled. Host firewall is disabled by default.\r\n\r\n### Patches\r\n\r\nThe bug is fixed in versions v1.10.13 and v1.11.7 of Cilium.\r\n\r\n### Workarounds\r\n\r\nFor affected users who can't upgrade, one potential workaround is to ensure all pods have network policies that prevent sending arbitrary traffic to the local node.\r\n\r\n### References\r\n\r\nCommit fixing the vulnerability: https://github.com/cilium/cilium/commit/c758da7e9d19cd19b96dc90424c0b5ec7409cd0a.\r\n\r\n### For more information\r\n\r\nIf you have any questions or comments about this advisory, please reach out on [Slack](https://docs.cilium.io/en/latest/community/community/#slack).\r\n\r\nAs usual, if you think you found a related vulnerability, we strongly encourage you to report security vulnerabilities to our private security mailing list: [security@cilium.io](mailto:security@cilium.io)—first, before disclosing them in any public forums. This is a private mailing list where only members of the Cilium internal security team are subscribed to, and is treated as top priority.",
+	"severity": "low",
+	"identifiers": [
+		{
+			"value": "GHSA-wc5v-r48v-g4vh",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2022-07-15T17:13:23Z",
+	"updated_at": "2022-07-17T14:56:08Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "go",
+				"name": "cilium-agent"
+			},
+			"vulnerable_version_range": "\u003c=1.10.12, \u003c=1.11.6",
+			"patched_versions": "1.10.13, 1.11.7"
+		}
+	],
+	"url": "https://api.github.com/repos/cilium/cilium/security-advisories/GHSA-wc5v-r48v-g4vh",
+	"html_url": "https://github.com/cilium/cilium/security/advisories/GHSA-wc5v-r48v-g4vh",
+	"publisher": {
+		"login": "joestringer",
+		"id": 1243336,
+		"node_id": "MDQ6VXNlcjEyNDMzMzY=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/1243336?v=4",
+		"html_url": "https://github.com/joestringer",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/joestringer",
+		"events_url": "https://api.github.com/users/joestringer/events{/privacy}",
+		"following_url": "https://api.github.com/users/joestringer/following{/other_user}",
+		"followers_url": "https://api.github.com/users/joestringer/followers",
+		"gists_url": "https://api.github.com/users/joestringer/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/joestringer/orgs",
+		"received_events_url": "https://api.github.com/users/joestringer/received_events",
+		"repos_url": "https://api.github.com/users/joestringer/repos",
+		"starred_url": "https://api.github.com/users/joestringer/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/joestringer/subscriptions"
+	},
+	"state": "published",
+	"credits": [
+		{
+			"login": "pchaigno",
+			"type": "analyst"
+		}
+	],
+	"credits_detailed": [
+		{
+			"user": {
+				"login": "pchaigno",
+				"id": 1764210,
+				"node_id": "MDQ6VXNlcjE3NjQyMTA=",
+				"avatar_url": "https://avatars.githubusercontent.com/u/1764210?v=4",
+				"html_url": "https://github.com/pchaigno",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/pchaigno",
+				"events_url": "https://api.github.com/users/pchaigno/events{/privacy}",
+				"following_url": "https://api.github.com/users/pchaigno/following{/other_user}",
+				"followers_url": "https://api.github.com/users/pchaigno/followers",
+				"gists_url": "https://api.github.com/users/pchaigno/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/pchaigno/orgs",
+				"received_events_url": "https://api.github.com/users/pchaigno/received_events",
+				"repos_url": "https://api.github.com/users/pchaigno/repos",
+				"starred_url": "https://api.github.com/users/pchaigno/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/pchaigno/subscriptions"
+			},
+			"type": "analyst",
+			"state": "accepted"
+		}
+	]
+}

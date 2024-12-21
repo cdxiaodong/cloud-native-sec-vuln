@@ -1,0 +1,83 @@
+{
+	"cvss": {
+		"score": 4.3,
+		"vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N"
+	},
+	"ghsa_id": "GHSA-pfhr-pccp-hwmh",
+	"summary": "Network Policies \u0026 (Clusterwide) Cilium Network Policies with namespace label selectors may unexpectedly select pods with maliciously crafted labels",
+	"description": "### Impact\r\n\r\nIf a user has Network Policies with namespace selectors selecting labels of namespaces, or (clusterwide) Cilium Network Policies matching on namespace labels, then it is possible for an attacker with Kubernetes pod deploy rights (either directly or indirectly via higher-level APIs such as Deployment, Daemonset etc) to craft additional pod labels such that the pod is selected by another policy that exists rather than the expected policy. \r\n\r\n### Patches\r\n\r\nThe problem has been fixed and is available on versions \u003e=1.10.14, \u003e=1.11.8, \u003e=1.12.1\r\n\r\n### Workarounds\r\n\r\nThere are no workarounds available.\r\n\r\n### Acknowledgements\r\n\r\nThe Cilium community has worked together with members of Isovalent to prepare these mitigations. Special thanks to Sander Mathijssen for not only highlighting the issue but also proposing a resolution. \r\n\r\n### For more information\r\n\r\nIf you have any questions or comments about this advisory, please reach out on [Slack](https://docs.cilium.io/en/latest/community/community/#slack).\r\n\r\nAs usual, if you think you found a related vulnerability, we strongly encourage you to report security vulnerabilities to our private security mailing list: [security@cilium.io](mailto:security@cilium.io) - first, before disclosing them in any public forums. This is a private mailing list where only members of the Cilium internal security team are subscribed to, and is treated as top priority.\r\n",
+	"severity": "medium",
+	"identifiers": [
+		{
+			"value": "GHSA-pfhr-pccp-hwmh",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2022-08-17T00:35:00Z",
+	"updated_at": "2022-08-17T00:35:00Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "go",
+				"name": "cilium-agent"
+			},
+			"vulnerable_version_range": "\u003c= 1.12.0, \u003c=1.11.7, \u003c=1.10.13",
+			"patched_versions": "1.12.1, 1.11.8, 1.10.14"
+		}
+	],
+	"url": "https://api.github.com/repos/cilium/cilium/security-advisories/GHSA-pfhr-pccp-hwmh",
+	"html_url": "https://github.com/cilium/cilium/security/advisories/GHSA-pfhr-pccp-hwmh",
+	"publisher": {
+		"login": "joestringer",
+		"id": 1243336,
+		"node_id": "MDQ6VXNlcjEyNDMzMzY=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/1243336?v=4",
+		"html_url": "https://github.com/joestringer",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/joestringer",
+		"events_url": "https://api.github.com/users/joestringer/events{/privacy}",
+		"following_url": "https://api.github.com/users/joestringer/following{/other_user}",
+		"followers_url": "https://api.github.com/users/joestringer/followers",
+		"gists_url": "https://api.github.com/users/joestringer/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/joestringer/orgs",
+		"received_events_url": "https://api.github.com/users/joestringer/received_events",
+		"repos_url": "https://api.github.com/users/joestringer/repos",
+		"starred_url": "https://api.github.com/users/joestringer/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/joestringer/subscriptions"
+	},
+	"state": "published",
+	"credits": [
+		{
+			"login": "sanderma",
+			"type": "analyst"
+		}
+	],
+	"credits_detailed": [
+		{
+			"user": {
+				"login": "sanderma",
+				"id": 13538978,
+				"node_id": "MDQ6VXNlcjEzNTM4OTc4",
+				"avatar_url": "https://avatars.githubusercontent.com/u/13538978?v=4",
+				"html_url": "https://github.com/sanderma",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/sanderma",
+				"events_url": "https://api.github.com/users/sanderma/events{/privacy}",
+				"following_url": "https://api.github.com/users/sanderma/following{/other_user}",
+				"followers_url": "https://api.github.com/users/sanderma/followers",
+				"gists_url": "https://api.github.com/users/sanderma/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/sanderma/orgs",
+				"received_events_url": "https://api.github.com/users/sanderma/received_events",
+				"repos_url": "https://api.github.com/users/sanderma/repos",
+				"starred_url": "https://api.github.com/users/sanderma/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/sanderma/subscriptions"
+			},
+			"type": "analyst",
+			"state": "accepted"
+		}
+	]
+}
