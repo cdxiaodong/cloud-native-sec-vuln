@@ -1,0 +1,76 @@
+{
+	"cvss": {
+		"score": 8.8,
+		"vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"
+	},
+	"cwes": [
+		{
+			"cwe_id": "CWE-287",
+			"name": "Improper Authentication"
+		}
+	],
+	"ghsa_id": "GHSA-c45c-39f6-6gw9",
+	"summary": "Rancher generated tokens not revoked after modifications made to authentication provider",
+	"description": "### Impact\r\n\r\nThis issue affects Rancher versions from 2.5.0 up to and including 2.5.16, from 2.6.0 up to and including 2.6.9 and 2.7.0. It only affects Rancher setups that have an external [authentication provider](https://ranchermanager.docs.rancher.com/pages-for-subheaders/authentication-config) configured or had one configured in the past.\r\n\r\nIt was discovered that when an external authentication provider is configured in Rancher and then disabled, the Rancher generated [tokens](https://ranchermanager.docs.rancher.com/reference-guides/about-the-api/api-tokens) associated with users who had access granted through the now disabled auth provider are not revoked. This allows users to retain access to Rancher and `kubectl` access to clusters managed by Rancher, according to their previous configured permissions, even after they are supposed to have lost it due to the auth provider been disabled.\r\n\r\nThe problem also occurs if the auth provider is configured (and is still enabled) to use the [access level scopes](https://ranchermanager.docs.rancher.com/pages-for-subheaders/authentication-config) `allow members of clusters and projects, plus authorized users \u0026 groups` and `restrict access to only the authorized users \u0026 groups`. In this case, removing users and groups from the authorized lists will not revoke the access tokens and they will remain valid.\r\n\r\n\r\nAn example scenario is:\r\n\r\n1. OpenLDAP, MS Active Directory (AD) or any other external [authentication provider](https://ranchermanager.docs.rancher.com/pages-for-subheaders/authentication-config) is configured as an auth provider.\r\n2. A user (`cluster-owner`) is granted `cluster-owner` permissions on a downstream cluster (`test-cluster`).\r\n3. `cluster-owner` logs in using their external auth provider username and password.\r\n4. `cluster-owner` generates a `kubeconfig` token for `test-cluster`.\r\n5. The configured external auth provider is disabled.\r\n\r\nIn this scenario, the `kubeconfig` generated in step 4 will still be valid after step 5, and `test-cluster` can still be accessed using the `kubeconfig` token.\r\n\r\nBy default, tokens for authenticated session have their `ttl` (time to live) set to `960` minutes, so they will expire after `16` hours. `kubeconfig` tokens are configured to never expire, and their `ttl` is set to `0`. These configurations can be changed in the Rancher's settings (`Configuration \u003e Global Settings \u003e Settings`) with the [parameters](https://ranchermanager.docs.rancher.com/reference-guides/about-the-api/api-tokens)  `auth-user-session-ttl-minutes` and `kubeconfig-default-token-ttl-minutes`, respectively.\r\n\r\n### Workarounds\r\n\r\nIf you cannot update to a patched Rancher version, the recommended workaround is to review and remove tokens associated with auth providers manually.\r\n\r\nThe tokens can be reviewed by executing `kubectl get tokens` in Rancher's `local` cluster. Each found token must be manually reviewed to check if it belongs to a user from a disabled auth provider or a user who's access was previously removed from the auth provider (when the auth provider is still enabled and is or was configured to use access level scopes, as mentioned above). The identified tokens can be removed with `kubectl delete tokens \u003ctoken_name\u003e`.\r\n\r\nIt is important to mention that this workaround must be done every time an auth provider is disabled in case you cannot update to a patched version.\r\n\r\n### Patches\r\n\r\nPatched versions include releases 2.5.17, 2.6.10, 2.7.1 and later versions. After updating to a patched version, it is highly recommended to review the existing tokens and remove tokens related to disabled auth providers as described above in the workaround section.\r\n\r\n### For more information\r\n\r\nIf you have any questions or comments about this advisory:\r\n\r\n* Reach out to [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.\r\n* Open an issue in [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.\r\n* Verify our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/).",
+	"severity": "high",
+	"identifiers": [
+		{
+			"value": "GHSA-c45c-39f6-6gw9",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2023-01-25T03:24:24Z",
+	"updated_at": "2023-01-25T03:24:24Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "go",
+				"name": "rancher/rancher"
+			},
+			"vulnerable_version_range": "\u003e= 2.5.0, \u003c 2.5.17",
+			"patched_versions": "2.5.17"
+		},
+		{
+			"package": {
+				"ecosystem": "go",
+				"name": "rancher/rancher"
+			},
+			"vulnerable_version_range": "\u003e= 2.6.0, \u003c 2.6.10",
+			"patched_versions": "2.6.10"
+		},
+		{
+			"package": {
+				"ecosystem": "go",
+				"name": "rancher/rancher"
+			},
+			"vulnerable_version_range": "\u003e= 2.7.0, \u003c 2.7.1",
+			"patched_versions": "2.7.1"
+		}
+	],
+	"url": "https://api.github.com/repos/rancher/rancher/security-advisories/GHSA-c45c-39f6-6gw9",
+	"html_url": "https://github.com/rancher/rancher/security/advisories/GHSA-c45c-39f6-6gw9",
+	"publisher": {
+		"login": "macedogm",
+		"id": 17654553,
+		"node_id": "MDQ6VXNlcjE3NjU0NTUz",
+		"avatar_url": "https://avatars.githubusercontent.com/u/17654553?v=4",
+		"html_url": "https://github.com/macedogm",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/macedogm",
+		"events_url": "https://api.github.com/users/macedogm/events{/privacy}",
+		"following_url": "https://api.github.com/users/macedogm/following{/other_user}",
+		"followers_url": "https://api.github.com/users/macedogm/followers",
+		"gists_url": "https://api.github.com/users/macedogm/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/macedogm/orgs",
+		"received_events_url": "https://api.github.com/users/macedogm/received_events",
+		"repos_url": "https://api.github.com/users/macedogm/repos",
+		"starred_url": "https://api.github.com/users/macedogm/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/macedogm/subscriptions"
+	},
+	"state": "published",
+	"cwe_ids": [
+		"CWE-287"
+	]
+}
