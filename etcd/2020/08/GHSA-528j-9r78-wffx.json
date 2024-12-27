@@ -1,0 +1,53 @@
+{
+	"cvss": {},
+	"ghsa_id": "GHSA-528j-9r78-wffx",
+	"summary": "User credentials are stored in WAL logs in plaintext",
+	"description": "### Vulnerability type\r\nData Exposure\r\n\r\n### Workarounds\r\nThe etcd assumes that the on disk files are secure. The possible fixes have been provided, however, it is the responsibility of the etcd users to make sure that the etcd server WAL log files are secure. The [etcd doesn't encrypt key/value data stored on disk drives]( https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/security.md#does-etcd-encrypt-data-stored-on-disk-drives).\r\n\r\n### Detail\r\nUser credentials (login and password) are stored in WAL entries on each user authentication. If the WAL log files are not secure, it can potentially expose sensitive information.\r\n\r\n### References\r\nFind out more on this vulnerability in the [security audit report](https://github.com/etcd-io/etcd/blob/master/security/SECURITY_AUDIT.pdf)\r\n\r\n### For more information\r\nIf you have any questions or comments about this advisory:\r\n* Contact the [etcd security committee](https://github.com/etcd-io/etcd/blob/master/security/security-release-process.md#product-security-committee-psc)\r\n",
+	"severity": "low",
+	"identifiers": [
+		{
+			"value": "GHSA-528j-9r78-wffx",
+			"type": "GHSA"
+		},
+		{
+			"value": "",
+			"type": "CVE"
+		}
+	],
+	"published_at": "2020-08-05T03:58:19Z",
+	"updated_at": "2020-08-05T03:58:19Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "",
+				"name": "wal"
+			},
+			"vulnerable_version_range": "\u003c= 3.4.9",
+			"patched_versions": "3.4.10, 3.3.23"
+		}
+	],
+	"cve_id": "",
+	"url": "https://api.github.com/repos/etcd-io/etcd/security-advisories/GHSA-528j-9r78-wffx",
+	"html_url": "https://github.com/etcd-io/etcd/security/advisories/GHSA-528j-9r78-wffx",
+	"publisher": {
+		"login": "spzala",
+		"id": 6462877,
+		"node_id": "MDQ6VXNlcjY0NjI4Nzc=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/6462877?v=4",
+		"html_url": "https://github.com/spzala",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/spzala",
+		"events_url": "https://api.github.com/users/spzala/events{/privacy}",
+		"following_url": "https://api.github.com/users/spzala/following{/other_user}",
+		"followers_url": "https://api.github.com/users/spzala/followers",
+		"gists_url": "https://api.github.com/users/spzala/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/spzala/orgs",
+		"received_events_url": "https://api.github.com/users/spzala/received_events",
+		"repos_url": "https://api.github.com/users/spzala/repos",
+		"starred_url": "https://api.github.com/users/spzala/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/spzala/subscriptions"
+	},
+	"state": "published"
+}

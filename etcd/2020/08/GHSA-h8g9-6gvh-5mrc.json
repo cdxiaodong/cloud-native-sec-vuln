@@ -1,0 +1,53 @@
+{
+	"cvss": {},
+	"ghsa_id": "GHSA-h8g9-6gvh-5mrc",
+	"summary": "TOCTOU of gateway endpoint authentication",
+	"description": "### Vulnerability type\r\nAuthentication\r\n\r\n### Workarounds\r\nRefer to the [gateway documentation](https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/gateway.md). The vulnerability was spotted due to unclear documentation of how the gateway handles endpoints validation. \r\n\r\n### Detail\r\nThe gateway only authenticates endpoints detected from DNS SRV records, and it only authenticates the detected endpoints once. Therefore, if an endpoint changes its authentication settings, the gateway will continue to assume the endpoint is still authenticated. The auditors has noted that appropriate documentation of this validation functionality plus deprecation of this misleading functionality is an acceptable path forward.\r\n\r\n### References\r\nFind out more on this vulnerability in the [security audit report](https://github.com/etcd-io/etcd/blob/master/security/SECURITY_AUDIT.pdf)\r\n\r\n### For more information\r\nIf you have any questions or comments about this advisory:\r\n* Contact the [etcd security committee](https://github.com/etcd-io/etcd/blob/master/security/security-release-process.md#product-security-committee-psc)",
+	"severity": "low",
+	"identifiers": [
+		{
+			"value": "GHSA-h8g9-6gvh-5mrc",
+			"type": "GHSA"
+		},
+		{
+			"value": "",
+			"type": "CVE"
+		}
+	],
+	"published_at": "2020-08-05T03:38:31Z",
+	"updated_at": "2020-08-05T03:38:31Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "",
+				"name": ""
+			},
+			"vulnerable_version_range": "\u003c= 3.4.9",
+			"patched_versions": "3.4.10, 3.3.23"
+		}
+	],
+	"cve_id": "",
+	"url": "https://api.github.com/repos/etcd-io/etcd/security-advisories/GHSA-h8g9-6gvh-5mrc",
+	"html_url": "https://github.com/etcd-io/etcd/security/advisories/GHSA-h8g9-6gvh-5mrc",
+	"publisher": {
+		"login": "spzala",
+		"id": 6462877,
+		"node_id": "MDQ6VXNlcjY0NjI4Nzc=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/6462877?v=4",
+		"html_url": "https://github.com/spzala",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/spzala",
+		"events_url": "https://api.github.com/users/spzala/events{/privacy}",
+		"following_url": "https://api.github.com/users/spzala/following{/other_user}",
+		"followers_url": "https://api.github.com/users/spzala/followers",
+		"gists_url": "https://api.github.com/users/spzala/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/spzala/orgs",
+		"received_events_url": "https://api.github.com/users/spzala/received_events",
+		"repos_url": "https://api.github.com/users/spzala/repos",
+		"starred_url": "https://api.github.com/users/spzala/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/spzala/subscriptions"
+	},
+	"state": "published"
+}
