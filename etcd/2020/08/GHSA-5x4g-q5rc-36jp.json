@@ -1,0 +1,48 @@
+{
+	"cvss": {},
+	"ghsa_id": "GHSA-5x4g-q5rc-36jp",
+	"summary": "Insecure ciphers are allowed by default",
+	"description": "### Vulnerability type\r\nCryptography\r\n\r\n### Detail\r\nThe TLS ciphers list supported by etcd contains insecure cipher suites. Users can configure the desired ciphers using the “--cipher-suites” flag, and a default list of secure cipher suites is used if empty.\r\n\r\n### Workarounds\r\nBy default, no action is required. If users want to specify cipher suites using the '--cipher-suites' flag, they should try not to specify insecure cipher suites. Please refer to the [security documentation](https://etcd.io/docs/v3.4/op-guide/security/).\r\n\r\n### References\r\nFind out more on this vulnerability in the [security audit report](https://github.com/etcd-io/etcd/blob/main/security/SECURITY_AUDIT.pdf)\r\n\r\n### For more information\r\nIf you have any questions or comments about this advisory:\r\n* Contact the [etcd security committee](https://github.com/etcd-io/etcd/blob/main/security/security-release-process.md#product-security-committee-psc)",
+	"severity": "low",
+	"identifiers": [
+		{
+			"value": "GHSA-5x4g-q5rc-36jp",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2020-08-05T04:04:57Z",
+	"updated_at": "2024-07-02T06:33:28Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "",
+				"name": "pkg"
+			},
+			"vulnerable_version_range": "\u003c= 3.4.9",
+			"patched_versions": "3.4.22"
+		}
+	],
+	"url": "https://api.github.com/repos/etcd-io/etcd/security-advisories/GHSA-5x4g-q5rc-36jp",
+	"html_url": "https://github.com/etcd-io/etcd/security/advisories/GHSA-5x4g-q5rc-36jp",
+	"publisher": {
+		"login": "spzala",
+		"id": 6462877,
+		"node_id": "MDQ6VXNlcjY0NjI4Nzc=",
+		"avatar_url": "https://avatars.githubusercontent.com/u/6462877?v=4",
+		"html_url": "https://github.com/spzala",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/spzala",
+		"events_url": "https://api.github.com/users/spzala/events{/privacy}",
+		"following_url": "https://api.github.com/users/spzala/following{/other_user}",
+		"followers_url": "https://api.github.com/users/spzala/followers",
+		"gists_url": "https://api.github.com/users/spzala/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/spzala/orgs",
+		"received_events_url": "https://api.github.com/users/spzala/received_events",
+		"repos_url": "https://api.github.com/users/spzala/repos",
+		"starred_url": "https://api.github.com/users/spzala/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/spzala/subscriptions"
+	},
+	"state": "published"
+}
