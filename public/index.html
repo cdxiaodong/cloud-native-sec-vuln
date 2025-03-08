@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Native Security Vulnerability Knowledge Base</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h1 {
+            color: skyblue;
+        }
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .card {
+            margin-bottom: 20px;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background-color: #f1f8ff;
+            font-weight: bold;
+        }
+        .filters {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .severity-high {
+            color: #dc3545;
+        }
+        .severity-medium {
+            color: #fd7e14;
+        }
+        .severity-low {
+            color: #28a745;
+        }
+        #loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        .badge {
+            margin-right: 5px;
+        }
+        .truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .description {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Cloud Native Security Vulnerability Knowledge Base</h1>
+        
+        <div class="filters">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="componentFilter" class="form-label">Component</label>
+                    <select id="componentFilter" class="form-select">
+                        <option value="">All Components</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="yearFilter" class="form-label">Year</label>
+                    <select id="yearFilter" class="form-select">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="monthFilter" class="form-label">Month</label>
+                    <select id="monthFilter" class="form-select">
+                        <option value="">All Months</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-center">
+                <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
+                <button id="resetFilters" class="btn btn-secondary">Reset Filters</button>
+            </div>
+        </div>
+
+        <div id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Loading vulnerabilities...</p>
+        </div>
+        
+        <div id="vulnerabilities" class="row"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const vulnerabilitiesContainer = document.getElementById('vulnerabilities');
+            const loadingElement = document.getElementById('loading');
+            const componentFilter = document.getElementById('componentFilter');
+            const yearFilter = document.getElementById('yearFilter');
+            const monthFilter = document.getElementById('monthFilter');
+            const applyFiltersBtn = document.getElementById('applyFilters');
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            
+            // Get month name from number
+            function getMonthName(month) {
+                const months = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                return months[parseInt(month) - 1];
+            }
+            
+            // Get severity class
+            function getSeverityClass(severity) {
+                severity = severity.toLowerCase();
+                if (severity.includes('high') || severity.includes('critical')) {
+                    return 'severity-high';
+                } else if (severity.includes('medium')) {
+                    return 'severity-medium';
+                } else {
+                    return 'severity-low';
+                }
+            }
+            
+            // Render vulnerabilities
+            function renderVulnerabilities(data) {
+                vulnerabilitiesContainer.innerHTML = '';
+                
+                if (data.vulnerabilities.length === 0) {
+                    vulnerabilitiesContainer.innerHTML = '<div class="col-12 text-center"><p>No vulnerabilities found matching the selected filters.</p></div>';
+                    return;
+                }
+                
+                data.vulnerabilities.forEach(vuln => {
+                    const card = document.createElement('div');
+                    card.className = 'col-md-6 col-lg-4';
+                    card.innerHTML = `
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div class="truncate">${vuln.id}</div>
+                                <span class="badge bg-secondary">${vuln.component}</span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title truncate">${vuln.summary}</h5>
+                                <div class="mb-2">
+                                    <span class="badge ${getSeverityClass(vuln.severity)} bg-light text-dark">Severity: ${vuln.severity}</span>
+                                    <span class="badge bg-info text-dark">Date: ${vuln.year}-${vuln.month} (${getMonthName(vuln.month)})</span>
+                                </div>
+                                <div class="description">
+                                    <p class="card-text">${vuln.description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    vulnerabilitiesContainer.appendChild(card);
+                });
+            }
+            
+            // Update filter options
+            function updateFilterOptions(data) {
+                // Components
+                componentFilter.innerHTML = '<option value="">All Components</option>';
+                data.filters.components.sort().forEach(component => {
+                    componentFilter.innerHTML += `<option value="${component}">${component}</option>`;
+                });
+                
+                // Years
+                yearFilter.innerHTML = '<option value="">All Years</option>';
+                data.filters.years.sort().forEach(year => {
+                    yearFilter.innerHTML += `<option value="${year}">${year}</option>`;
+                });
+                
+                // Months
+                monthFilter.innerHTML = '<option value="">All Months</option>';
+                data.filters.months.sort().forEach(month => {
+                    monthFilter.innerHTML += `<option value="${month}">${month} (${getMonthName(month)})</option>`;
+                });
+            }
+            
+            // Fetch vulnerabilities with filters
+            function fetchVulnerabilities() {
+                loadingElement.style.display = 'block';
+                vulnerabilitiesContainer.style.display = 'none';
+                
+                const component = componentFilter.value;
+                const year = yearFilter.value;
+                const month = monthFilter.value;
+                
+                let url = '/api/vulnerabilities';
+                const params = new URLSearchParams();
+                
+                if (component) {
+                    params.append('component', component);
+                }
+                if (year) {
+                    params.append('year', year);
+                }
+                if (month) {
+                    params.append('month', month);
+                }
+                
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateFilterOptions(data);
+                        renderVulnerabilities(data);
+                        loadingElement.style.display = 'none';
+                        vulnerabilitiesContainer.style.display = 'flex';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching vulnerabilities:', error);
+                        loadingElement.innerHTML = '<p class="text-danger">Error loading vulnerabilities. Please try again.</p>';
+                    });
+            }
+            
+            // Initial fetch
+            fetchVulnerabilities();
+            
+            // Event listeners
+            applyFiltersBtn.addEventListener('click', fetchVulnerabilities);
+            resetFiltersBtn.addEventListener('click', function() {
+                componentFilter.value = '';
+                yearFilter.value = '';
+                monthFilter.value = '';
+                fetchVulnerabilities();
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+</html>
+
