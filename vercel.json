@@ -6,27 +6,14 @@
       "use": "@vercel/node"
     },
     {
-      "src": "public/**",
+      "src": "**/**/**/**.json",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "index.js"
-    },
-    {
-      "src": "/",
-      "dest": "index.js"
-    },
-    {
-      "src": "/(.+\\.[a-zA-Z]+)$",
-      "dest": "public/$1"
-    },
-    {
       "src": "/(.*)",
-      "dest": "index.js"
+      "dest": "/index.js"
     }
   ]
 }
-
