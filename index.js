@@ -141,7 +141,7 @@ app.get('/api/vulnerabilities/:id', (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Cloud Native Security Vulnerability Knowledge Base running on http://localhost:${PORT}`);
-});
-
+// app.listen(PORT, () => {
+//   console.log(`Cloud Native Security Vulnerability Knowledge Base running on http://localhost:${PORT}`);
+// });
+module.exports = app;
