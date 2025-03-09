@@ -3,50 +3,48 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Serve static files
-app.use(express.static('public'));
+// Serve static files from root (optional, if needed)
+app.use(express.static('.'));
 
 // Function to recursively find all JSON files in component directories
 function findVulnerabilityFiles() {
-  const components = fs.readdirSync('.', { withFileTypes: true })
+  const rootPath = __dirname; // Use __dirname instead of '.'
+  console.log('Root path:', rootPath);
+  console.log('Root dir contents:', fs.readdirSync(rootPath));
+  
+  const components = fs.readdirSync(rootPath, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory() && !dirent.name.startsWith('.') && dirent.name !== 'node_modules' && dirent.name !== 'public')
     .map(dirent => dirent.name);
   
   const vulnerabilities = [];
   
   components.forEach(component => {
-    // Check if component directory exists
-    if (!fs.existsSync(component)) return;
+    const componentPath = path.join(rootPath, component);
+    if (!fs.existsSync(componentPath)) return;
     
-    const yearsPath = path.join('.', component);
-    // Get all year directories
-    const years = fs.readdirSync(yearsPath, { withFileTypes: true })
+    const years = fs.readdirSync(componentPath, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory() && /^\d{4}$/.test(dirent.name))
       .map(dirent => dirent.name);
     
     years.forEach(year => {
-      const monthsPath = path.join(yearsPath, year);
-      // Get all month directories
-      const months = fs.readdirSync(monthsPath, { withFileTypes: true })
+      const yearPath = path.join(componentPath, year);
+      const months = fs.readdirSync(yearPath, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory() && /^\d{2}$/.test(dirent.name))
         .map(dirent => dirent.name);
       
       months.forEach(month => {
-        const vulnerabilitiesPath = path.join(monthsPath, month);
-        // Get all JSON files
-        const files = fs.readdirSync(vulnerabilitiesPath, { withFileTypes: true })
+        const monthPath = path.join(yearPath, month);
+        const files = fs.readdirSync(monthPath, { withFileTypes: true })
           .filter(dirent => dirent.isFile() && path.extname(dirent.name) === '.json')
           .map(dirent => dirent.name);
         
         files.forEach(file => {
-          const filePath = path.join(vulnerabilitiesPath, file);
+          const filePath = path.join(monthPath, file);
           try {
             const data = fs.readFileSync(filePath, 'utf8');
             const json = JSON.parse(data);
             
-            // Extract relevant information
             const vulnerability = {
               id: path.basename(file, '.json'),
               component,
@@ -83,25 +81,20 @@ app.get('/api/vulnerabilities', (req, res) => {
       console.log(`Found ${vulnerabilityCache.length} vulnerabilities`);
     }
     
-    // Apply filters if provided
     let filteredData = [...vulnerabilityCache];
     
-    // Filter by component
     if (req.query.component) {
       filteredData = filteredData.filter(v => v.component === req.query.component);
     }
     
-    // Filter by year
     if (req.query.year) {
       filteredData = filteredData.filter(v => v.year === req.query.year);
     }
     
-    // Filter by month
     if (req.query.month) {
       filteredData = filteredData.filter(v => v.month === req.query.month);
     }
     
-    // Get unique components and dates for filters
     const components = [...new Set(vulnerabilityCache.map(v => v.component))];
     const years = [...new Set(vulnerabilityCache.map(v => v.year))];
     const months = [...new Set(vulnerabilityCache.map(v => v.month))];
@@ -140,8 +133,4 @@ app.get('/api/vulnerabilities/:id', (req, res) => {
   }
 });
 
-// Start the server
-// app.listen(PORT, () => {
-//   console.log(`Cloud Native Security Vulnerability Knowledge Base running on http://localhost:${PORT}`);
-// });
 module.exports = app;
