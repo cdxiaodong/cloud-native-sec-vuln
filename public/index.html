@@ -215,7 +215,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center mb-5">Cloud Native Security Vulnerability Knowledge Base</h1>
+        <h1 class="text-center mb-5" onclick="location.reload()" style="cursor: pointer;">Cloud Native Security Vulnerability Knowledge Base</h1>
         
         <div class="filters">
             <div class="row">
@@ -326,20 +326,31 @@
             }
             
             function updateFilterOptions(data) {
+                // 记录当前选择
+                const currentComponent = componentFilter.value;
+                const currentYear = yearFilter.value;
+                const currentMonth = monthFilter.value;
+                
+                // 更新组件选项
                 componentFilter.innerHTML = '<option value="">所有组件</option>';
                 data.filters.components.sort().forEach(component => {
                     componentFilter.innerHTML += `<option value="${component}">${component}</option>`;
                 });
+                componentFilter.value = currentComponent; // 恢复选择
                 
+                // 更新年份选项
                 yearFilter.innerHTML = '<option value="">所有年份</option>';
                 data.filters.years.sort().forEach(year => {
                     yearFilter.innerHTML += `<option value="${year}">${year}</option>`;
                 });
+                yearFilter.value = currentYear; // 恢复选择
                 
+                // 更新月份选项
                 monthFilter.innerHTML = '<option value="">所有月份</option>';
                 data.filters.months.sort().forEach(month => {
                     monthFilter.innerHTML += `<option value="${month}">${month} (${getMonthName(month)})</option>`;
                 });
+                monthFilter.value = currentMonth; // 恢复选择
             }
             
             function fetchVulnerabilities() {
