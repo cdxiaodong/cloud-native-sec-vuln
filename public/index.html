@@ -5,109 +5,265 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud Native Security Vulnerability Knowledge Base</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        h1 {
-            color: skyblue;
+        :root {
+            --primary-color: #2C5282;    /* Deep blue for headings and buttons */
+            --secondary-color: #FFFFFF;  /* White for backgrounds */
+            --accent-color: #48BB78;    /* Green for low severity */
+            --text-color: #2D3748;      /* Dark gray for text */
+            --light-blue: #E0F2FE;      /* Light blue for body background */
+            --code-bg: #F0F9FF;         /* Light blue for code blocks */
         }
+
         body {
-            padding-top: 20px;
-            background-color: #f8f9fa;
+            padding-top: 40px;
+            background: var(--light-blue);
+            font-family: 'Roboto', sans-serif;
         }
+
+        h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
+            margin-bottom: 40px;
         }
-        .card {
-            margin-bottom: 20px;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card-header {
-            background-color: #f1f8ff;
-            font-weight: bold;
-        }
+
         .filters {
-            background-color: #fff;
+            background: var(--secondary-color);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border: 1px solid #B3D7FF;
+        }
+
+        .form-select {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background: #3B6899;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            border-radius: 8px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            margin-bottom: 30px;
+            border: 1px solid #B3D7FF;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            background: var(--secondary-color);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background: linear-gradient(to right, #EBF4FF, #FFF);
+            border-bottom: 1px solid #EDF2F7;
+            padding: 15px 20px;
+            border-radius: 15px 15px 0 0;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .card-body {
             padding: 20px;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
         }
+
         .severity-high {
-            color: #dc3545;
+            color: #E53E3E;
+            background: #FFF5F5;
+            padding: 4px 8px;
+            border-radius: 4px;
         }
+
         .severity-medium {
-            color: #fd7e14;
+            color: #ED8936;
+            background: #FFFAF0;
+            padding: 4px 8px;
+            border-radius: 4px;
         }
+
         .severity-low {
-            color: #28a745;
+            color: var(--accent-color);
+            background: #F0FFF4;
+            padding: 4px 8px;
+            border-radius: 4px;
         }
+
         #loading {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            margin: 20px 0;
         }
+
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
         .badge {
-            margin-right: 5px;
+            margin-right: 8px;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 500;
         }
+
         .truncate {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
         }
+
         .description {
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
+            background: var(--code-bg);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .card-title {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Markdown Content Styles */
+        .description img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .description code {
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+        }
+
+        .description pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .description pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .description ul,
+        .description ol {
+            padding-left: 20px;
+        }
+
+        .description blockquote {
+            border-left: 4px solid #DDD;
+            margin: 10px 0;
+            padding-left: 15px;
+            color: #666;
+        }
+
+        .description table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .description th,
+        .description td {
+            padding: 8px;
+            border: 1px solid #DDD;
+        }
+
+        .description th {
+            background-color: #F8F9FA;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center mb-4">Cloud Native Security Vulnerability Knowledge Base</h1>
+        <h1 class="text-center mb-5">Cloud Native Security Vulnerability Knowledge Base</h1>
         
         <div class="filters">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="componentFilter" class="form-label">Component</label>
+                    <label for="componentFilter" class="form-label fw-bold">组件</label>
                     <select id="componentFilter" class="form-select">
-                        <option value="">All Components</option>
+                        <option value="">所有组件</option>
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="yearFilter" class="form-label">Year</label>
+                    <label for="yearFilter" class="form-label fw-bold">年份</label>
                     <select id="yearFilter" class="form-select">
-                        <option value="">All Years</option>
+                        <option value="">所有年份</option>
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="monthFilter" class="form-label">Month</label>
+                    <label for="monthFilter" class="form-label fw-bold">月份</label>
                     <select id="monthFilter" class="form-select">
-                        <option value="">All Months</option>
+                        <option value="">所有月份</option>
                     </select>
                 </div>
             </div>
-            <div class="text-center">
-                <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
-                <button id="resetFilters" class="btn btn-secondary">Reset Filters</button>
+            <div class="text-center mt-3">
+                <button id="applyFilters" class="btn btn-primary me-2">应用筛选</button>
+                <button id="resetFilters" class="btn btn-secondary">重置筛选</button>
             </div>
         </div>
 
         <div id="loading">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">加载中...</span>
             </div>
-            <p>Loading vulnerabilities...</p>
+            <p class="mt-2">正在加载漏洞信息...</p>
         </div>
         
         <div id="vulnerabilities" class="row"></div>
     </div>
 
     <script>
+        // 配置 marked 解析器
+        marked.setOptions({
+            breaks: true,
+            highlight: function(code) {
+                return hljs.highlightAuto(code).value;
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Elements
             const vulnerabilitiesContainer = document.getElementById('vulnerabilities');
             const loadingElement = document.getElementById('loading');
             const componentFilter = document.getElementById('componentFilter');
@@ -116,16 +272,14 @@
             const applyFiltersBtn = document.getElementById('applyFilters');
             const resetFiltersBtn = document.getElementById('resetFilters');
             
-            // Get month name from number
             function getMonthName(month) {
                 const months = [
-                    'January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'
+                    '一月', '二月', '三月', '四月', '五月', '六月',
+                    '七月', '八月', '九月', '十月', '十一月', '十二月'
                 ];
                 return months[parseInt(month) - 1];
             }
             
-            // Get severity class
             function getSeverityClass(severity) {
                 severity = severity.toLowerCase();
                 if (severity.includes('high') || severity.includes('critical')) {
@@ -137,18 +291,18 @@
                 }
             }
             
-            // Render vulnerabilities
             function renderVulnerabilities(data) {
                 vulnerabilitiesContainer.innerHTML = '';
                 
                 if (data.vulnerabilities.length === 0) {
-                    vulnerabilitiesContainer.innerHTML = '<div class="col-12 text-center"><p>No vulnerabilities found matching the selected filters.</p></div>';
+                    vulnerabilitiesContainer.innerHTML = '<div class="col-12 text-center"><p>未找到匹配筛选条件的漏洞信息。</p></div>';
                     return;
                 }
                 
                 data.vulnerabilities.forEach(vuln => {
                     const card = document.createElement('div');
                     card.className = 'col-md-6 col-lg-4';
+                    const description = marked.parse(vuln.description || '');
                     card.innerHTML = `
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
@@ -158,11 +312,11 @@
                             <div class="card-body">
                                 <h5 class="card-title truncate">${vuln.summary}</h5>
                                 <div class="mb-2">
-                                    <span class="badge ${getSeverityClass(vuln.severity)} bg-light text-dark">Severity: ${vuln.severity}</span>
-                                    <span class="badge bg-info text-dark">Date: ${vuln.year}-${vuln.month} (${getMonthName(vuln.month)})</span>
+                                    <span class="badge ${getSeverityClass(vuln.severity)}">严重性: ${vuln.severity}</span>
+                                    <span class="badge bg-info text-dark">日期: ${vuln.year}-${vuln.month} (${getMonthName(vuln.month)})</span>
                                 </div>
                                 <div class="description">
-                                    <p class="card-text">${vuln.description}</p>
+                                    ${description}
                                 </div>
                             </div>
                         </div>
@@ -171,28 +325,23 @@
                 });
             }
             
-            // Update filter options
             function updateFilterOptions(data) {
-                // Components
-                componentFilter.innerHTML = '<option value="">All Components</option>';
+                componentFilter.innerHTML = '<option value="">所有组件</option>';
                 data.filters.components.sort().forEach(component => {
                     componentFilter.innerHTML += `<option value="${component}">${component}</option>`;
                 });
                 
-                // Years
-                yearFilter.innerHTML = '<option value="">All Years</option>';
+                yearFilter.innerHTML = '<option value="">所有年份</option>';
                 data.filters.years.sort().forEach(year => {
                     yearFilter.innerHTML += `<option value="${year}">${year}</option>`;
                 });
                 
-                // Months
-                monthFilter.innerHTML = '<option value="">All Months</option>';
+                monthFilter.innerHTML = '<option value="">所有月份</option>';
                 data.filters.months.sort().forEach(month => {
                     monthFilter.innerHTML += `<option value="${month}">${month} (${getMonthName(month)})</option>`;
                 });
             }
             
-            // Fetch vulnerabilities with filters
             function fetchVulnerabilities() {
                 loadingElement.style.display = 'block';
                 vulnerabilitiesContainer.style.display = 'none';
@@ -203,24 +352,22 @@
                 
                 let url = '/api/vulnerabilities';
                 const params = new URLSearchParams();
-                
-                if (component) {
-                    params.append('component', component);
-                }
-                if (year) {
-                    params.append('year', year);
-                }
-                if (month) {
-                    params.append('month', month);
-                }
-                
-                if (params.toString()) {
-                    url += '?' + params.toString();
-                }
+                if (component) params.append('component', component);
+                if (year) params.append('year', year);
+                if (month) params.append('month', month);
+                if (params.toString()) url += '?' + params.toString();
                 
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
+                        // 默认按时间降序排序
+                        data.vulnerabilities.sort((a, b) => {
+                            if (a.year !== b.year) {
+                                return b.year - a.year; // 年份降序
+                            }
+                            return b.month - a.month; // 年份相同，按月份降序
+                        });
+                        
                         updateFilterOptions(data);
                         renderVulnerabilities(data);
                         loadingElement.style.display = 'none';
@@ -228,14 +375,12 @@
                     })
                     .catch(error => {
                         console.error('Error fetching vulnerabilities:', error);
-                        loadingElement.innerHTML = '<p class="text-danger">Error loading vulnerabilities. Please try again.</p>';
+                        loadingElement.innerHTML = '<p class="text-danger">加载漏洞信息失败，请稍后重试。</p>';
                     });
             }
             
-            // Initial fetch
             fetchVulnerabilities();
             
-            // Event listeners
             applyFiltersBtn.addEventListener('click', fetchVulnerabilities);
             resetFiltersBtn.addEventListener('click', function() {
                 componentFilter.value = '';
@@ -248,8 +393,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-<!DOCTYPE html>
-<html lang="en">
-</html>
-
