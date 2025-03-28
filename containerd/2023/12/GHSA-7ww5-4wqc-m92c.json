@@ -47,6 +47,10 @@
 	"state": "published",
 	"credits": [
 		{
+			"login": "zhangzhics",
+			"type": "reporter"
+		},
+		{
 			"login": "garrisongys",
 			"type": "reporter"
 		},
@@ -56,6 +60,30 @@
 		}
 	],
 	"credits_detailed": [
+		{
+			"user": {
+				"login": "zhangzhics",
+				"id": 108529347,
+				"node_id": "U_kgDOBngGww",
+				"avatar_url": "https://avatars.githubusercontent.com/u/108529347?v=4",
+				"html_url": "https://github.com/zhangzhics",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/zhangzhics",
+				"events_url": "https://api.github.com/users/zhangzhics/events{/privacy}",
+				"following_url": "https://api.github.com/users/zhangzhics/following{/other_user}",
+				"followers_url": "https://api.github.com/users/zhangzhics/followers",
+				"gists_url": "https://api.github.com/users/zhangzhics/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/zhangzhics/orgs",
+				"received_events_url": "https://api.github.com/users/zhangzhics/received_events",
+				"repos_url": "https://api.github.com/users/zhangzhics/repos",
+				"starred_url": "https://api.github.com/users/zhangzhics/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/zhangzhics/subscriptions"
+			},
+			"type": "reporter",
+			"state": "accepted"
+		},
 		{
 			"user": {
 				"login": "garrisongys",
